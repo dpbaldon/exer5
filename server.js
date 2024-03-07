@@ -3,20 +3,31 @@ import express from 'express';
 // instantiate the server
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
 
 app.post('/add-book', (req,res) => {
-
 
 
 });
 
 
 app.get('/find-by-isbn-author', (req,res) => {
+    readFile(book.txt, 'utf8', (err, data) => {
+        if (err) throw err;
 
+        const lines = data.split('\n');
+        const result = [];
 
+        lines.forEAch(line => {
+            const line_element = line.split(',');
 
+            if(line_element.indexOf(req.query.isbn) == 1 && line_element.indexOf(req.query.author) == 2){
+                console.log('Found it: ', + line);
+                result.push(line);
+            }
+        });
+    });
+    res.send(result);
 });
 
 
