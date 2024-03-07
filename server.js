@@ -1,4 +1,5 @@
 import express from 'express';
+import fs from 'fs';
 
 // instantiate the server
 const app = express();
@@ -6,13 +7,30 @@ app.use(express.json());
 
 
 app.post('/add-book', (req,res) => {
+    const { bookname, isbn, author, yearpublished } = req.body;
 
+    // check if all required fields are present and not empty
+    if (!bookname || !isbn || !author || !yearpublished) {
+        res.json({ success: false });
+        return;
+    }
 
+    // create string representation of the book entry
+    const bookEntry = `${bookname},${isbn},${author},${yearpublished}\n`;
+
+    // append the book entry to the books.txt file
+    fs.appendFile('books.txt', bookEntry, (err) => {
+        if (err) {
+            res.json({ success: false });
+            return;
+        }
+        res.json({ success: true });
+    });
 });
 
 
 app.get('/find-by-isbn-author', (req,res) => {
-    readFile(book.txt, 'utf8', (err, data) => {
+    fs.readFile(book.txt, 'utf8', (err, data) => {
         if (err) throw err;
 
         const lines = data.split('\n');
@@ -32,7 +50,7 @@ app.get('/find-by-isbn-author', (req,res) => {
 
 
 app.get('/find-by-author', (req,res) =>{
-    readFile(book.txt, 'utf8', (err, data) => {
+    fs.readFile(book.txt, 'utf8', (err, data) => {
         if (err) throw err;
 
         var lines = data.split('\n');
