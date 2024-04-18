@@ -5,8 +5,8 @@ import fs from 'fs';
 const app = express();
 app.use(express.json());
 
-
-app.post('/add-book', (req,res) => {
+// POST method to add books
+app.post('/add-book', (req, res) => {
     const { bookname, isbn, author, yearpublished } = req.body;
 
     // check if all required fields are present and not empty
@@ -17,7 +17,6 @@ app.post('/add-book', (req,res) => {
 
     // create string representation of the book entry
     const bookEntry = `${bookname},${isbn},${author},${yearpublished}\n`;
-
     // append the book entry to the books.txt file
     fs.appendFile('books.txt', bookEntry, (err) => {
         if (err) {
@@ -28,15 +27,17 @@ app.post('/add-book', (req,res) => {
     });
 });
 
-
+// GET method to retrieve book details by ISBN and Author
 app.get('/find-by-isbn-author', (req,res) => {
-    fs.readFile(book.txt, 'utf8', (err, data) => {
+    const { isbn, author } = req.query;
+    // read data from file
+    fs.readFile('books.txt', 'utf8', (err, data) => {
         if (err) throw err;
 
         const lines = data.split('\n');
         const result = [];
 
-        lines.forEAch(line => {
+        lines.forEach(line => {
             const line_element = line.split(',');
 
             if(line_element.indexOf(req.query.isbn) == 1 && line_element.indexOf(req.query.author) == 2){
@@ -48,16 +49,18 @@ app.get('/find-by-isbn-author', (req,res) => {
     res.send(result);
 });
 
-
+// GET method to retrieve book details by Author
 app.get('/find-by-author', (req,res) =>{
-    fs.readFile(book.txt, 'utf8', (err, data) => {
+    const { author } = req.query;
+    // read data from file
+    fs.readFile('books.txt', 'utf8', (err, data) => {
         if (err) throw err;
 
-        var lines = data.split('\n');
-        var result = [];
+        const lines = data.split('\n');
+        const result = [];
 
         lines.forEAch(line => {
-            var line_element = line.split(',');
+            const line_element = line.split(',');
 
             if(line_element.indexOf(req.query.author) == 2){
                 console.log('Found it: ', + line);
@@ -68,7 +71,4 @@ app.get('/find-by-author', (req,res) =>{
     res.send(result);
 });
 
-
-// this tells our server to listen to the port 3000
-// we can also pass an optional callback function to execute after the server starts
 app.listen(3000, () => { console.log('Server started at port 3000')} );
